@@ -1,0 +1,7 @@
+---
+# Install firewall : packages, certificates, configuration files
+- name: Install ufw (Debian only)
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - ufw
+  when: ansible_facts['os_family'] == "Debian"

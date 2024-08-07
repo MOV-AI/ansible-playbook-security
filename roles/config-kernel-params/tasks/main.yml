@@ -1,0 +1,39 @@
+---
+####
+#### Config Kernel parameters
+####
+
+- name: Disable icmp redirect and tcp timestamp [manager]
+  become: true
+  template:
+    dest: "{{ item.dest }}"
+    src: "{{ item.template }}"
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+  with_items:
+    - { dest: '/etc/sysctl.d/96-disable-icmpv4.conf', template: '96-disable-icmpv4-manager.conf.j2' }
+    - { dest: '/etc/sysctl.d/95-disable-icmpv6.conf', template: '95-disable-icmpv6-manager.conf.j2' }
+    - { dest: '/etc/sysctl.d/97-disable-tcpv4-timestamp.conf', template: '97-disable-tcpv4-timestamp.conf.j2' }
+  when:
+    - '"managers" in group_names'
+
+
+- name: Disable icmp redirect and tcp timestamp [robot]
+  become: true
+  template:
+    dest: "{{ item.dest }}"
+    src: "{{ item.template }}"
+    mode: '0644'
+    owner: 'root'
+    group: 'root'
+  with_items:
+    - { dest: '/etc/sysctl.d/96-disable-icmpv4.conf', template: '96-disable-icmpv4-robot.conf.j2' }
+    - { dest: '/etc/sysctl.d/95-disable-icmpv6.conf', template: '95-disable-icmpv6-robot.conf.j2' }
+    - { dest: '/etc/sysctl.d/97-disable-tcpv4-timestamp.conf', template: '97-disable-tcpv4-timestamp.conf.j2' }
+  when:
+    - '"workers" in group_names'
+
+- name: Apply sysctl configurations
+  shell: sysctl --system
+  register: result_current_device

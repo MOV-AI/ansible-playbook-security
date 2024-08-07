@@ -1,0 +1,6 @@
+firewall_state: disabled
+
+hardening__home_folders:
+  - '/home/movai'
+  - '/var/snap/lxd/common/lxd'
+

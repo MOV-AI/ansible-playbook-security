@@ -1,0 +1,79 @@
+- name: Worker firewall configuration
+  hosts: workers
+  any_errors_fatal: true
+  tags:
+    - ufw
+    - firewall
+  roles:
+    - role: firewall
+      become: true
+  handlers:
+  - include: ../roles/firewall/handlers/main.yml
+  vars:
+    ufw_state: "{{ firewall_state }}"
+
+- name: Close icmp redirect
+  hosts: workers, managers
+  any_errors_fatal: true
+  tags:
+    - hardening
+  roles:
+    - role: config-kernel-params
+      become: true
+
+- name: Change default umask to a safe value
+  hosts: workers, managers
+  any_errors_fatal: true
+  tags:
+    - hardening
+  roles:
+    - role: config-default-umask
+      become: true
+
+- name: Adjust permissions on home folders
+  hosts: workers, managers
+  tags:
+    - hardening
+  tasks:
+    - name: Adjust permission of home folders
+      become: true
+      file:
+        path:  "{{ item }}"
+        state: directory
+        mode: '750'
+      loop: "{{ hardening__home_folders }}"
+
+- name: Purge Samba
+  hosts: workers
+  tags:
+    - hardening
+  tasks:
+    - name: Purge samba deb from ubuntu
+      become: true
+      apt:
+        name: samba
+        state: absent
+        purge: yes
+        autoremove: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+- name: Fleet OS and SSH hardening.
+  hosts: workers
+  tags:
+    - hardening
+  collections:
+    - devsec.hardening
+  roles:
+    - role: devsec.hardening.os_hardening
+      become: true
+      when: hardening__os is defined and hardening__os
+    - role: devsec.hardening.ssh_hardening
+      become: true
+      when: hardening__ssh is defined and hardening__ssh
+  vars:
+    sysctl_overwrite:
+      # Enable IPv4 traffic forwarding required for docker.
+      net.ipv4.ip_forward: 1
+    ansible_role_name: "OS hardening"
+    #Required for correct systemd pip package installed in fleet install playbook.
+    ansible_default_interpreter: "/usr/bin/python3"
