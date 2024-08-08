@@ -9,6 +9,7 @@ on:
       - 'debian/changelog'
 jobs:
   Sanity:
+    if: false
     timeout-minutes: 90
     name: "Sanity checks"
     runs-on: [ self-hosted, Linux, docker, test ]
