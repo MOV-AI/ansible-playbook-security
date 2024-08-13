@@ -13,7 +13,8 @@
 - name: Log ufw status
   become: true
   shell:
-    cmd: "ufw status | grep Status"
+    cmd: "set -o pipefail && ufw status | grep Status"
+
   register: ufw_status
   changed_when: false
 
