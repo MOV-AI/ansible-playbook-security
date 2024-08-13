@@ -1,3 +1,14 @@
+---
+# Apply hardening to the cluster
+
+# Playbook variables
+# hardening__home_folders:
+#   - /root
+#   - /home/ubuntu
+# hardening__os: true
+# hardening__ssh: true
+# hardening__firewall_state: enabled
+
 - name: Worker firewall configuration
   hosts: workers
   any_errors_fatal: true
@@ -8,9 +19,10 @@
     - role: firewall
       become: true
   handlers:
-  - include: ../roles/firewall/handlers/main.yml
+    - name: Restart ufw
+      include_tasks: ../roles/firewall/handlers/main.yml
   vars:
-    ufw_state: "{{ firewall_state }}"
+    ufw_state: "{{ hardening__firewall_state }}"
 
 - name: Close icmp redirect
   hosts: workers, managers
@@ -38,7 +50,7 @@
     - name: Adjust permission of home folders
       become: true
       file:
-        path:  "{{ item }}"
+        path: "{{ item }}"
         state: directory
         mode: '750'
       loop: "{{ hardening__home_folders }}"
@@ -53,8 +65,8 @@
       apt:
         name: samba
         state: absent
-        purge: yes
-        autoremove: yes
+        purge: true
+        autoremove: true
       when: ansible_facts['os_family'] == 'Debian'
 
 - name: Fleet OS and SSH hardening.

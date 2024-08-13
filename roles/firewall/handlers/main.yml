@@ -1,6 +1,6 @@
 ---
 # handlers file for firewall
-- name: restart ufw
+- name: Restart ufw
   become: true
   ufw:
     state: "{{ ufw_state }}"

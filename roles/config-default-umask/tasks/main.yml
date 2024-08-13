@@ -12,7 +12,7 @@
   replace:
     path: /etc/bashrc
     regexp: "umask.*"
-    replace: "umask {{ hardening__umask_default }}"
+    replace: "umask {{ config_default_umask_default_value }}"
   when: register_etc_bashrc.stat.exists
 
 - name: Check /etc/profile
@@ -24,7 +24,7 @@
   replace:
     path: /etc/profile
     regexp: "umask.*"
-    replace: "umask {{ hardening__umask_default }}"
+    replace: "umask {{ config_default_umask_default_value }}"
   when: register_profile.stat.exists
 
 - name: Check /etc/csh.cshrc
@@ -36,7 +36,7 @@
   replace:
     path: /etc/csh.cshrc
     regexp: "umask.*"
-    replace: "umask {{ hardening__umask_default }}"
+    replace: "umask {{ config_default_umask_default_value }}"
   when: register_etc_csh_cshrc.stat.exists
 
 - name: Check /etc/login.defs
@@ -49,5 +49,5 @@
     create: yes
     dest: /etc/login.defs
     regexp: ^UMASK
-    line: "UMASK {{ hardening__umask_default }}"
+    line: "UMASK {{ config_default_umask_default_value }}"
   when: register_etc_login_defs.stat.exists

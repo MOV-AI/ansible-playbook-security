@@ -64,3 +64,12 @@ fleet:
 ## Test with molecule
 
 See [instructions](./molecule/default/install.md)
+
+## devsec.hardening collection
+
+This repository uses the [devsec.hardening](https://galaxy.ansible.com/ui/repo/published/devsec/hardening/) collection to apply security configurations to the fleet. The collection is installed with the `requirements.yml` file.
+2 roles are used from the collection:
+- devsec.os-hardening: see [documentation](https://github.com/dev-sec/ansible-collection-hardening/tree/master/roles/os_hardening)
+- devsec.ssh-hardening: see [documentation](https://github.com/dev-sec/ansible-collection-hardening/tree/master/roles/ssh_hardening)
+
+

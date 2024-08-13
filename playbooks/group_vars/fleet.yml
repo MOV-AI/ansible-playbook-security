@@ -1,0 +1,8 @@
+hardening__firewall_state: disabled # default is disabled but can be set to enabled
+
+hardening__home_folders: # default is empty but can be set to a list of folders
+  - '/home/movai'
+  - '/var/snap/lxd/common/lxd'
+hardening__os: true # default is false but can be set to true to run OS hardening tasks
+
+hardening__ssh: true # default is false but can be set to true to run SSH hardening tasks

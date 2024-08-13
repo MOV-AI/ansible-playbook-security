@@ -10,27 +10,27 @@
     - name: Pre-Install packages (on Redhat).
       yum:
         name: "{{ item }}"
-        update_cache: yes
+        update_cache: true
         state: present
       when: ansible_facts['os_family'] == 'RedHat'
       loop:
-       - sudo
+        - sudo
 
     - name: Pre-Install packages (on Ubuntu).
       apt:
         name: "{{ item }}"
-        update_cache: yes
+        update_cache: true
         state: present
       when: ansible_facts['os_family'] == 'Debian'
       loop:
-       - gpg-agent
-       - openssh-server
+        - gpg-agent
+        - openssh-server
 
     - name: Start and enable SSH service on Ubuntu
       service:
         name: sshd
         state: started
-        enabled: yes
+        enabled: true
       when: ansible_facts['os_family'] == 'Debian'
 
     - name: 'Pre-Install openssl'
