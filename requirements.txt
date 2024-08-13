@@ -6,7 +6,6 @@ yamllint==1.32.0
 docker==6.1.3
 molecule==6.0.2
 molecule-docker==2.1.0
-molecule-ec2==0.4
-molecule-libvirt==0.0.6
 jq==1.5.0
 urllib3<=2
+requests<2.32.0

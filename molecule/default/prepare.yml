@@ -1,0 +1,54 @@
+---
+- name: 'Prepare'
+  hosts: 'all'
+  tasks:
+    - name: 'Update APT cache'
+      apt:
+        update_cache: true
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Pre-Install packages (on Redhat).
+      yum:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      when: ansible_facts['os_family'] == 'RedHat'
+      loop:
+       - sudo
+
+    - name: Pre-Install packages (on Ubuntu).
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      when: ansible_facts['os_family'] == 'Debian'
+      loop:
+       - gpg-agent
+       - openssh-server
+
+    - name: Start and enable SSH service on Ubuntu
+      service:
+        name: sshd
+        state: started
+        enabled: yes
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: 'Pre-Install openssl'
+      package:
+        name: 'openssl'
+        state: 'present'
+
+    - name: Create group movai
+      group:
+        name: 'movai'
+        gid: '1000'
+        state: 'present'
+
+    - name: Create user movai
+      user:
+        name: 'movai'
+        uid: '1000'
+        group: '1000'
+        state: 'present'
+        shell: '/bin/bash'
+        createhome: 'yes'

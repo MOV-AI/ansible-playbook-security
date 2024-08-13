@@ -9,10 +9,9 @@ on:
       - 'debian/changelog'
 jobs:
   Sanity:
-    if: false
     timeout-minutes: 90
     name: "Sanity checks"
-    runs-on: [ self-hosted, Linux, docker, test ]
+    runs-on: [ self-hosted, Linux, qa-runner ]
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -41,6 +40,8 @@ jobs:
     - name: Molecule tests
       run: |
         source molecule-venv/bin/activate
+        mkdir -p /tmp/staging
+        sudo chmod 755 -Rf /tmp/staging
         molecule converge -- --skip-tags ldap --extra-vars '{"fleet_extra_hosts": ["172.22.0.106 registry.hel.mov.ai traefik"]}'
         deactivate
       env:
@@ -61,6 +62,6 @@ jobs:
       if: always()
       shell: bash
       run: |
-        docker system prune -f
+        docker system prune -f -a --volumes
         docker image prune -f --all
         rm -rf molecule-venv/
