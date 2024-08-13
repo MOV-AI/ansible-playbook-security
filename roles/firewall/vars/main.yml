@@ -1,6 +1,6 @@
 ---
 # vars file for firewall
-ufw_state: disabled
+firewall_ufw_state: disabled
 firewall_allowed_ports:
   - { rule: 'allow', port: '22', proto: 'tcp' }
   - { rule: 'allow', port: '8901', proto: 'tcp' }

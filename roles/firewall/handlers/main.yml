@@ -1,6 +1,37 @@
 ---
 # handlers file for firewall
-- name: Restart ufw
+- name: Enable ufw
   become: true
-  ufw:
-    state: "{{ ufw_state }}"
+  command: "ufw enable"
+  when: firewall_ufw_state == 'enabled'
+
+- name: Disable ufw
+  become: true
+  command: "ufw disable"
+  when: firewall_ufw_state == 'disabled'
+
+- name: Log ufw status
+  become: true
+  shell:
+    cmd: "ufw status | grep Status"
+  register: ufw_status
+  changed_when: false
+
+- name: Debug ufw status
+  debug:
+    var: ufw_status.stdout
+  when: ufw_status.stdout is defined
+
+- name: Fail if ufw is not running
+  fail:
+    msg: "ufw is not running"
+  when:
+    - ufw_status.stdout is defined
+    - firewall_ufw_state == 'enabled' and "active" not in ufw_status.stdout
+
+- name: Fail if ufw is running
+  fail:
+    msg: "ufw is running"
+  when:
+    - ufw_status.stdout is defined
+    - firewall_ufw_state == 'disabled' and "inactive" not in ufw_status.stdout

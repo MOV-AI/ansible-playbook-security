@@ -24,7 +24,7 @@
   notify:
     - restart ufw
 
-- name: "configure ufw ports and set state to {{ ufw_state }}"
+- name: "configure ufw ports and set state to {{ firewall_ufw_state }}"
   become: true
   ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
   loop: "{{ firewall_allowed_ports }}"
