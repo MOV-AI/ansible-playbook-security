@@ -1,3 +1,3 @@
 ---
-# vars file for config-default-umask
+# vars file for config_default_umask
 config_default_umask_default_value: 077

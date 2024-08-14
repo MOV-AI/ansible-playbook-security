@@ -5,8 +5,8 @@ This repository contains a collection of Ansible playbooks and roles to secure a
 ## Table of contents
 
 Roles:
-- config-default-umask
-- config-kernel-params
+- config_default_umask
+- config_kernel_params
 - firewall
 
 Collections used:

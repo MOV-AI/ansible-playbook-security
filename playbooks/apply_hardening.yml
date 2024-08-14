@@ -28,7 +28,7 @@
   tags:
     - hardening
   roles:
-    - role: config-kernel-params
+    - role: config_kernel_params
       become: true
 
 - name: Change default umask to a safe value
@@ -37,7 +37,7 @@
   tags:
     - hardening
   roles:
-    - role: config-default-umask
+    - role: config_default_umask
       become: true
 
 - name: Adjust permissions on home folders
