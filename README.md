@@ -4,10 +4,13 @@ This repository contains a collection of Ansible playbooks and roles to secure a
 
 ## Table of contents
 
-Roles::
+Roles:
 - config-default-umask
 - config-kernel-params
 - firewall
+
+Collections used:
+- devsec.hardening: OS and SSH hardening
 
 Playbooks:
 - apply-hardening
