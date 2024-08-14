@@ -1,0 +1,8 @@
+---
+- name: Install ufw (RedHat only)
+  become: true
+  ansible.builtin.yum:
+    name: "ufw"
+    update_cache: yes
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"

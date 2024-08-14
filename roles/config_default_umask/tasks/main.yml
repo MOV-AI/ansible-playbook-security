@@ -1,0 +1,53 @@
+---
+####
+#### Config safe umask value for all users
+####
+
+- name: Check /etc/bashrc
+  stat:
+    path: /etc/bashrc
+  register: register_etc_bashrc
+
+- name: Set user umask in /etc/bashrc
+  replace:
+    path: /etc/bashrc
+    regexp: "umask.*"
+    replace: "umask {{ config_default_umask_default_value }}"
+  when: register_etc_bashrc.stat.exists
+
+- name: Check /etc/profile
+  stat:
+    path: /etc/profile
+  register: register_profile
+
+- name: Set user umask in /etc/profile
+  replace:
+    path: /etc/profile
+    regexp: "umask.*"
+    replace: "umask {{ config_default_umask_default_value }}"
+  when: register_profile.stat.exists
+
+- name: Check /etc/csh.cshrc
+  stat:
+    path: /etc/csh.cshrc
+  register: register_etc_csh_cshrc
+
+- name: Set user umask in /etc/csh.cshrc
+  replace:
+    path: /etc/csh.cshrc
+    regexp: "umask.*"
+    replace: "umask {{ config_default_umask_default_value }}"
+  when: register_etc_csh_cshrc.stat.exists
+
+- name: Check /etc/login.defs
+  stat:
+    path: /etc/login.defs
+  register: register_etc_login_defs
+
+- name: Ensure the Default UMASK is Set Correctly
+  lineinfile:
+    create: yes
+    dest: /etc/login.defs
+    regexp: ^UMASK
+    line: "UMASK {{ config_default_umask_default_value }}"
+  when: register_etc_login_defs.stat.exists
