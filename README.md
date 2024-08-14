@@ -13,7 +13,7 @@ Collections used:
 - devsec.hardening: OS and SSH hardening
 
 Playbooks:
-- apply-hardening
+- apply_hardening
 
 ## Usage
 

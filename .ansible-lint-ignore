@@ -1,7 +1,7 @@
 # This file contains ignores rule violations for ansible-lint
-playbooks/apply-hardening.yml fqcn[action-core]
-playbooks/apply-hardening.yml fqcn[keyword]
-playbooks/apply-hardening.yml no-changed-when
-playbooks/apply-hardening.yml var-naming[read-only]
+playbooks/apply_hardening.yml fqcn[action-core]
+playbooks/apply_hardening.yml fqcn[keyword]
+playbooks/apply_hardening.yml no-changed-when
+playbooks/apply_hardening.yml var-naming[read-only]
 roles/firewall/handlers/main.yml fqcn[action-core]
 roles/firewall/handlers/main.yml no-changed-when

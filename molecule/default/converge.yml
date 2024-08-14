@@ -3,4 +3,4 @@
   hosts: all
 
 - name: Apply hardening
-  import_playbook: ../../playbooks/apply-hardening.yml
+  import_playbook: ../../playbooks/apply_hardening.yml

@@ -34,7 +34,7 @@ jobs:
         ANSIBLE_FORCE_COLOR: '1'
       run: |
         source molecule-venv/bin/activate
-        ansible-lint playbooks/apply-hardening.yml
+        ansible-lint playbooks/apply_hardening.yml
         deactivate
 
     - name: Molecule tests
