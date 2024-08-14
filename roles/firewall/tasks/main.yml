@@ -15,24 +15,18 @@
 - name: Install task requirements
   include_tasks: "install-{{ ansible_facts['os_family'] }}.yml"
 
-- name: configure ufw defaults
-  become: true
+- name: Configure ufw defaults
   ufw: direction={{ item.direction }} policy={{ item.policy }}
   with_items:
     - { direction: 'incoming', policy: 'deny' }
     - { direction: 'outgoing', policy: 'allow' }
-  notify:
-    - restart ufw
 
-- name: "configure ufw ports and set state to {{ firewall_ufw_state }}"
-  become: true
+- name: "Configure ufw ports and set state to {{ firewall_ufw_state }}"
   ufw: rule={{ item.rule }} port={{ item.port }} proto={{ item.proto }}
   loop: "{{ firewall_allowed_ports }}"
-  notify:
-    - restart ufw
 
 # You should install Docker before this rule.
-- name: configure ufw before.init to remove existing rules
+- name: Configure ufw before.init to remove existing rules
   blockinfile:
     path: /etc/ufw/before.init
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
@@ -51,13 +45,13 @@
       iptables -A INPUT -p icmp --icmp-type timestamp-request -j DROP || true
       iptables -A OUTPUT -p icmp --icmp-type timestamp-reply -j DROP || true
 
-- name: chmod /etc/ufw/before.init
+- name: Chmod /etc/ufw/before.init
   file:
     path: /etc/ufw/before.init
     state: touch
     mode: "a+x"
 
-- name: configure ufw to work with DOCKER-USER chain name
+- name: Configure ufw to work with DOCKER-USER chain name
   blockinfile:
     path: /etc/ufw/after.rules
     marker: "# {mark} ANSIBLE MANAGED BLOCK (docker-user)"
@@ -74,3 +68,38 @@
       -A DOCKER-USER -i {{ ansible_default_ipv4.interface }} -j DROP
 
       COMMIT
+
+- name: Set fact for ufw command
+  set_fact:
+    firewall_ufw_command: "{{ 'enable' if firewall_ufw_state == 'enabled' else 'disable' }}"
+
+- name: Restart ufw to {{ firewall_ufw_state }}"
+  command: "ufw {{ firewall_ufw_command }}"
+
+- name: Log ufw status
+  shell:
+    cmd: "set -o pipefail && ufw status | grep Status"
+    executable: /bin/bash
+
+
+  register: ufw_status
+  changed_when: false
+
+- name: Debug ufw status
+  debug:
+    var: ufw_status.stdout
+  when: ufw_status.stdout is defined
+
+- name: Fail if ufw is not running
+  fail:
+    msg: "ufw is not running"
+  when:
+    - ufw_status.stdout is defined
+    - firewall_ufw_state == 'enabled' and "active" not in ufw_status.stdout
+
+- name: Fail if ufw is running
+  fail:
+    msg: "ufw is running"
+  when:
+    - ufw_status.stdout is defined
+    - firewall_ufw_state == 'disabled' and "inactive" not in ufw_status.stdout

@@ -40,9 +40,7 @@ jobs:
     - name: Molecule tests
       run: |
         source molecule-venv/bin/activate
-        mkdir -p /tmp/staging
-        sudo chmod 755 -Rf /tmp/staging
-        molecule converge -- --skip-tags ldap --extra-vars '{"fleet_extra_hosts": ["172.22.0.106 registry.hel.mov.ai traefik"]}'
+        molecule converge
         deactivate
       env:
         PY_COLORS: '1'

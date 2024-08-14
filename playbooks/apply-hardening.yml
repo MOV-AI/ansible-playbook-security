@@ -20,17 +20,7 @@
       become: true
       vars:
         firewall_ufw_state: "{{ hardening__firewall_state }}"
-  handlers:
-    - name: Restart ufw
-      include_tasks: ../roles/firewall/handlers/main.yml
-      vars:
-        firewall_ufw_state: "{{ hardening__firewall_state }}"
-  vars:
-    firewall_ufw_state: "{{ hardening__firewall_state }}"
-  tasks:
-    - name: Notify ufw restart
-      command: "true"
-      notify: Restart ufw
+        firewall_allowed_ports: "{{ hardening__firewall_allowed_ports }}"
 
 - name: Close icmp redirect
   hosts: workers, managers

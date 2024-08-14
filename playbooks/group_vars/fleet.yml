@@ -1,4 +1,13 @@
 hardening__firewall_state: disabled # default is disabled but can be set to enabled
+hardening__firewall_allowed_ports: # default is empty but can be set to a list of ports
+  - { rule: 'allow', port: '22', proto: 'tcp' }
+  - { rule: 'allow', port: '8901', proto: 'tcp' }
+  - { rule: 'allow', port: '9090', proto: 'tcp' }
+  - { rule: 'allow', port: '11411', proto: 'tcp' }
+  - { rule: 'allow', port: '80', proto: 'tcp' }
+  - { rule: 'allow', port: '443', proto: 'tcp' }
+  - { rule: 'allow', port: '6379', proto: 'tcp' }
+  - { rule: 'allow', port: '9000', proto: 'tcp' }
 
 hardening__home_folders: # default is empty but can be set to a list of folders
   - '/home/movai'
