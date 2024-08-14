@@ -61,7 +61,7 @@ jobs:
         echo "commit_id=$commit_hash" >> $GITHUB_OUTPUT
         
     - name: Create Github Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         name: "Release of ${{ steps.vars-after-raise.outputs.pkg_version }}"
         body: "Please add release notes"
