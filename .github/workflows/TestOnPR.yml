@@ -68,9 +68,11 @@ jobs:
         docker image prune -f --all
         rm -rf molecule-venv/
 
-    - name: Python venvs cleanup
+    - name: Python and galaxy cleanup
       if: always()
       run: |
         rm -rf molecule-venv/
         rm -rf .molecule/
+        # remove collections
+        rm -rf movai-*.tar.gz
 

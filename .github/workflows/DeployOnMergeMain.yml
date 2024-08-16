@@ -5,7 +5,8 @@ on:
       - main
       - 'releases/**'
     paths-ignore:
-      - 'version'
+      - ".bumpversion.cfg"
+
 jobs:
   Deploy:
     timeout-minutes: 30
@@ -15,35 +16,25 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Find Package details
-      id: vars
-      run: |
-        PACKAGE_VERSION=$(cat version)
-        echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+    - name: Install raise requirements
+      run: python3 -m pip install -r build-requirements.txt
 
-    - name: Raise Version
-      id: vars-after-raise
-      run: |
-        PACKAGE_VERSION=${{ steps.vars.outputs.pkg_version }}
-        main_version=${PACKAGE_VERSION%-*}
-        build_id="${PACKAGE_VERSION#*-}"
-        raised_buildid=$(($build_id+1))
-        RAISED_PACKAGE_VERSION="$main_version-$raised_buildid"
-        echo $RAISED_PACKAGE_VERSION>version
-        echo "pkg_version=$RAISED_PACKAGE_VERSION" >> $GITHUB_OUTPUT
-    - name: Commit raise version
+    - name: Raise App version
       id: raise
       run: |
-        git config --global user.name '${{ secrets.RAISE_BOT_COMMIT_USER }}'
-        git config --global user.email '${{ secrets.RAISE_BOT_COMMIT_MAIL }}'
-        git pull
-        git add version
-        git commit -m "[skip actions] Automatic Bump of build version"
+        git config --global --add safe.directory $(pwd)
+        git config --global user.name ${{ secrets.RAISE_BOT_COMMIT_USER }}
+        git config --global user.email ${{ secrets.RAISE_BOT_COMMIT_MAIL }}
+        bump2version patch --no-tag
+        version=$(cat version)
+        echo "version=$version" >> $GITHUB_OUTPUT
+
     - name: Set branch output
       id: var_branch
       run: |
         echo "Branch name is: ${GITHUB_REF#refs/heads/}"
         echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+
     - name: Raise App version
       uses: CasperWA/push-protected@v2.14.0
       with:
@@ -56,12 +47,13 @@ jobs:
       run: |
         commit_hash=$(git log --format="%H" -n 1)
         echo "commit_id=$commit_hash" >> $GITHUB_OUTPUT
+
     - name: Create Github Release
       uses: softprops/action-gh-release@v2
       with:
-        name: "Release of ${{ steps.vars-after-raise.outputs.pkg_version }}"
+        name: "Release of ${{ steps.raise.outputs.version }}"
         body: "Please add release notes"
-        tag_name: ${{ steps.vars-after-raise.outputs.pkg_version }}
+        tag_name: ${{ steps.raise.outputs.version }}
         target_commitish: ${{ steps.commit_id.outputs.commit_id }}
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
