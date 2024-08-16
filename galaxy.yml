@@ -1,6 +1,6 @@
 namespace: movai
 name: security
-version: 1.0.1
+version: 1.0.0
 readme: README.md
 authors:
   - MOV:AI DevOps Team <devops@mov.ai>

@@ -35,7 +35,7 @@ You can also include it in a requirements.yml file and install it with `ansible-
 collections:
   - name: git@github.com:MOV-AI/ansible-collection-security.git
     type: git
-    version: "1.0.1-0"
+    version: "1.0.0"
 ```
 
 The python module dependencies are not installed by ansible-galaxy. They can be manually installed using pip:
@@ -97,7 +97,7 @@ To install the collection from source locally, use the following command:
 
 ```sh
 ansible-galaxy collection build
-ansible-galaxy collection install movai-security-1.0.1.tar.gz
+ansible-galaxy collection install movai-security-1.0.0.tar.gz
 ```
 
 ### Running the tests
