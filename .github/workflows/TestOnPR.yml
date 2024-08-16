@@ -44,6 +44,12 @@ jobs:
         PY_COLORS: '1'
         ANSIBLE_FORCE_COLOR: '1'
 
+    - name: Ansible collection build
+      run: |
+        source molecule-venv/bin/activate
+        ansible-galaxy collection build -f
+        deactivate
+
     - name: Molecule clean
       if: always()
       run: |
@@ -62,7 +68,9 @@ jobs:
         docker image prune -f --all
         rm -rf molecule-venv/
 
-    - name: Ansible collection build
+    - name: Python venvs cleanup
+      if: always()
       run: |
-        ansible-galaxy collection build -f
+        rm -rf molecule-venv/
+        rm -rf .molecule/
 

@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  namespace: movai
+  min_ansible_version: "2.15"
+  author: MOV:AI DevOps Team <devops@mov.ai>
+  description: >
+    This collection contains roles and playbooks to secure a fleet of machines.
+  license: COPYING
+  platforms:
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+    - name: Ubuntu
+      versions:
+        - "focal"
+        - "jammy"
+
+
