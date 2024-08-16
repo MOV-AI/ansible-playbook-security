@@ -1,0 +1,26 @@
+namespace: movai
+name: security
+version: 1.0.0
+readme: README.md
+authors:
+  - MOV:AI DevOps Team <devops@mov.ai>
+description: >
+  This collection contains roles and playbooks to secure a fleet of machines.
+license_file: COPYING
+tags:
+  - movai
+  - security
+  - hardening
+  - firewall
+repository: https://github.com/MOV-AI/ansible-collection-security
+documentation: https://github.com/MOV-AI/ansible-collection-security
+homepage: https://github.com/MOV-AI/ansible-collection-security
+issues: https://github.com/MOV-AI/ansible-collection-security/issues
+dependencies:
+  devsec.hardening: ">=10.0.0"
+
+build_ignore:
+  # https://docs.ansible.com/ansible/devel/dev_guide/developing_collections_distributing.html#ignoring-files-and-folders
+  - .gitignore
+  - .github
+  - .vscode

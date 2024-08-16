@@ -1,6 +1,6 @@
-# ansible-playbook-security
+# movai.security
 
-This repository contains a collection of Ansible playbooks and roles to secure a fleet of machines organized as managers and workers.
+This collection contains a set of roles and playbooks to secure a fleet of machines organized as managers and workers.
 
 ## Table of contents
 
@@ -9,11 +9,11 @@ Roles:
 - config_kernel_params
 - firewall
 
-Collections used:
-- devsec.hardening: OS and SSH hardening
-
 Playbooks:
 - apply_hardening
+
+Collections used:
+- devsec.hardening: OS and SSH hardening
 
 ## Usage
 
@@ -21,25 +21,50 @@ Ansible version requires at least Python 3.9
 
 > Take great attention at the version of python and ansible used and follow the installation instructions below.
 
-Please refer to the [Virtual environment documentation](https://virtualenv.pypa.io/en/latest/) for installation best
-practices. If not using a virtual environment, please consider passing the
-[widely recommended](https://packaging.python.org/tutorials/installing-packages/#installing-to-the-user-site) `'--user' flag`_ when invoking ``pip``.
+### Installing this collection from the GIT repository
 
-    $ python3.9 -m venv ansible-venv
-    $ source ansible-venv/bin/activate
-    (ansible-venv) $ pip install -r requirements.txt
+You can install the movai.security collection with the Ansible Galaxy CLI:
 
-## Requirements
+```sh
+ansible-galaxy collection install git+git@github.com:MOV-AI/ansible-collection-security.git
+```
 
-    (ansible-venv) $ ansible-galaxy collection install -r requirements.yml
+You can also include it in a requirements.yml file and install it with `ansible-galaxy collection install -r requirements.yml`, using the format:
 
-## Running the playbooks
+```yaml
+collections:
+  - name: git@github.com:MOV-AI/ansible-collection-security.git
+    type: git
+    version: "1.0.0-0"
+```
 
-    ```bash
-    (ansible-venv) $ ansible-playbook -i <INVENTORY_FILENAME> <PLAYBOOK_FILENAME>
-    ```
+The python module dependencies are not installed by ansible-galaxy. They can be manually installed using pip:
 
-## Inventory file format
+```sh
+pip install -r requirements.txt
+```
+
+### Using the playbooks
+
+Apply the hardening playbook to secure your machines:
+
+```sh
+ansible-playbook -i inventory.yml movai.security.apply_hardening.yml
+```
+
+### Using the roles
+
+You can use the roles in your own playbooks:
+
+```yaml
+- hosts: all
+  roles:
+    - role: movai.security.config_default_umask
+    - role: movai.security.config_kernel_params
+    - role: movai.security.firewall
+```
+
+### Inventory file format
 
 Respect the format given in the example below:
 
@@ -52,7 +77,7 @@ fleet:
           ansible_host: <MANAGER_IP>
       vars:
         ansible_user: <MANAGER_USER>
-        ansible_ssh_private_key_file: <MANAGER_SSH_KEY_PATH>
+        ansible_ssh_private_key_file: <MANAGERS_SSH_KEY_PATH>
     workers:
       hosts:
         member0:
@@ -61,12 +86,31 @@ fleet:
           ansible_host: <MEMBER1_IP>
       vars:
         ansible_user: <MEMBERS_USER>
-        ansible_ssh_private_key_file: ~/.ssh/aws_slave.pem
+        ansible_ssh_private_key_file: <WORKERS_SSH_KEY_PATH>
 ```
 
-## Test with molecule
+## Development
 
-See [instructions](./molecule/default/install.md)
+### Installing the collection from source
+
+To install the collection from source locally, use the following command:
+
+```sh
+ansible-galaxy collection build
+ansible-galaxy collection install movai-security-1.0.0.tar.gz
+```
+
+### Running the tests
+
+To run the tests, use the following command:
+
+```sh
+python3.9 -m venv molecule-venv
+source molecule-venv/bin/activate
+pip install -r requirements.txt
+molecule converge
+```
+See [detailed instructions](./molecule/default/install.md)
 
 ## devsec.hardening collection
 
@@ -74,5 +118,4 @@ This repository uses the [devsec.hardening](https://galaxy.ansible.com/ui/repo/p
 2 roles are used from the collection:
 - devsec.os-hardening: see [documentation](https://github.com/dev-sec/ansible-collection-hardening/tree/master/roles/os_hardening)
 - devsec.ssh-hardening: see [documentation](https://github.com/dev-sec/ansible-collection-hardening/tree/master/roles/ssh_hardening)
-
-
+```
