@@ -61,12 +61,12 @@
     - name: Purge unsecure packages
       become: true
       apt:
-        name: {{ item }}
+        name: "{{ item }}"
         state: absent
         purge: true
         autoremove: true
       when: ansible_facts['os_family'] == 'Debian'
-      with_items:
+      loop:
         - telnet
         - samba
 
