@@ -5,24 +5,25 @@ on:
       - dev
       - main
       - 'releases/**'
-    paths-ignore:
-      - 'debian/changelog'
 jobs:
   Sanity:
     timeout-minutes: 90
     name: "Sanity checks"
-    runs-on: qa-runner
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install python 3.9 on host
+    - name: Check python version is higher than 3.9
       run: |
-        sudo apt install -y python3.9 python3.9-venv
+        if [[ $(python3 --version | cut -d' ' -f2 | cut -d'.' -f1) -lt 3 ]] || [[ $(python3 --version | cut -d' ' -f2 | cut -d'.' -f2) -lt 9 ]]; then
+          echo "Python version is less than 3.9"
+          exit 1
+        fi
 
     - name: Install test dependencies
       run: |
-        python3.9 -m venv molecule-venv
+        python3 -m venv molecule-venv
         source molecule-venv/bin/activate
         pip3 install -r requirements.txt
         ansible-galaxy collection install -r requirements.yml
@@ -46,6 +47,12 @@ jobs:
         PY_COLORS: '1'
         ANSIBLE_FORCE_COLOR: '1'
 
+    - name: Ansible collection build
+      run: |
+        source molecule-venv/bin/activate
+        ansible-galaxy collection build -f
+        deactivate
+
     - name: Molecule clean
       if: always()
       run: |
@@ -63,3 +70,12 @@ jobs:
         docker system prune -f -a --volumes
         docker image prune -f --all
         rm -rf molecule-venv/
+
+    - name: Python and galaxy cleanup
+      if: always()
+      run: |
+        rm -rf molecule-venv/
+        rm -rf .molecule/
+        # remove collections
+        rm -rf movai-*.tar.gz
+
