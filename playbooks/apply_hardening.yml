@@ -9,7 +9,7 @@
 # hardening__ssh: true
 # hardening__firewall_state: enabled
 
-- name: Worker firewall configuration
+- name: Apply firewall configuration on workers
   hosts: workers
   any_errors_fatal: true
   tags:
@@ -22,16 +22,16 @@
         firewall_ufw_state: "{{ hardening__firewall_state }}"
         firewall_allowed_ports: "{{ hardening__firewall_allowed_ports }}"
 
-- name: Close icmp redirect
+- name: Secure kernel parameters on workers and managers
   hosts: workers, managers
   any_errors_fatal: true
   tags:
     - hardening
   roles:
-    - role: config_kernel_params
+    - role: config_kernel_params # Close icmp redirects and secure the kernel
       become: true
 
-- name: Change default umask to a safe value
+- name: Secure default umask on workers and managers
   hosts: workers, managers
   any_errors_fatal: true
   tags:
@@ -40,7 +40,7 @@
     - role: config_default_umask
       become: true
 
-- name: Adjust permissions on home folders
+- name: Secure home folders permissions on workers and managers
   hosts: workers, managers
   tags:
     - hardening
@@ -53,21 +53,24 @@
         mode: '750'
       loop: "{{ hardening__home_folders }}"
 
-- name: Purge Samba
+- name: Remove unsecure packages from workers
   hosts: workers
   tags:
     - hardening
   tasks:
-    - name: Purge samba deb from ubuntu
+    - name: Purge unsecure packages
       become: true
       apt:
-        name: samba
+        name: "{{ item }}"
         state: absent
         purge: true
         autoremove: true
       when: ansible_facts['os_family'] == 'Debian'
+      loop:
+        - telnet
+        - samba
 
-- name: Fleet OS and SSH hardening.
+- name: Apply Fleet OS and SSH hardening
   hosts: workers
   tags:
     - hardening

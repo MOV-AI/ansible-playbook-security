@@ -38,15 +38,15 @@
         name: 'openssl'
         state: 'present'
 
-    - name: Create group movai
+    - name: Create group for test
       group:
-        name: 'movai'
+        name: 'test'
         gid: '1000'
         state: 'present'
 
-    - name: Create user movai
+    - name: Create user for test
       user:
-        name: 'movai'
+        name: 'test'
         uid: '1000'
         group: '1000'
         state: 'present'
